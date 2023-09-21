@@ -28,11 +28,3 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
-
-task execute(type:JavaExec) {
-   getMainClass().set(project.hasProperty("mainClass")
-     ? project.getProperty("mainClass")
-     : "clients.airport.AirportProducer"
-   )
-   classpath = sourceSets.main.runtimeClasspath
-}
