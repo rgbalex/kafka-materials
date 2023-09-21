@@ -1,0 +1,38 @@
+plugins {
+    // Apply the java-library plugin for API and implementation separation.
+    id 'java-library'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+def kafkaVersion = '3.5.0'
+
+dependencies {
+    // Use JUnit Jupiter for testing.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
+    // Use the Kafka 3.5.0 Java client
+    api "org.apache.kafka:kafka-clients:${kafkaVersion}"
+    api "org.apache.kafka:kafka-streams:${kafkaVersion}"
+
+    api 'com.google.guava:guava:32.1.2-jre'
+
+    // Needed to avoid unwanted errors from missing a SLF4J binding
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+}
+
+tasks.named('test') {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+}
+
+task execute(type:JavaExec) {
+   getMainClass().set(project.hasProperty("mainClass")
+     ? project.getProperty("mainClass")
+     : "clients.airport.AirportProducer"
+   )
+   classpath = sourceSets.main.runtimeClasspath
+}
