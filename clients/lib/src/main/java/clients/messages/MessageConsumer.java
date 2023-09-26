@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -23,7 +24,7 @@ public class MessageConsumer extends AbstractInteractiveShutdownConsumer {
 		props.put("group.id", "ping-consumers");
 		props.put("enable.auto.commit", "true");
 
-		try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props, new StringDeserializer(), new StringDeserializer())) {
+		try (Consumer<String, String> consumer = new KafkaConsumer<>(props, new StringDeserializer(), new StringDeserializer())) {
 			consumer.subscribe(Collections.singleton(MessageProducer.TOPIC_NAME));
 			System.out.println("Waiting for events...");
 

@@ -35,7 +35,7 @@ public class MessageProducer {
 				if (line == null || "exit".equals(line)) {
 					break;
 				} else {
-					producer.send(new ProducerRecord<String, String>(TOPIC_NAME, name, line));
+					producer.send(new ProducerRecord<>(TOPIC_NAME, name, line));
 					System.out.println("Event sent!");
 				}
 			}
