@@ -46,8 +46,7 @@ public class CrashedDeskConsumer extends AbstractInteractiveShutdownConsumer {
 			consumer.subscribe(Collections.singletonList(AirportProducer.TOPIC_STATUS), new ConsumerRebalanceListener() {
 			@Override
 			public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-				System.out.printf("onPartitionsRevoked - consumerName: %s, partitions: %s%n", "fred",
-						formatPartitions(partitions));
+				System.out.printf("onPartitionsRevoked - partitions: %s%n", formatPartitions(partitions));
 				
 				// if we decide to clear up on partition removed, do the following:
 				boolean clean_up = true;
@@ -67,18 +66,19 @@ public class CrashedDeskConsumer extends AbstractInteractiveShutdownConsumer {
 
 			@Override
 			public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-				System.out.printf("onPartitionsAssigned - consumerName: %s, partitions: %s%n", "fred",
-						formatPartitions(partitions));
+				System.out.printf("onPartitionsAssigned - partitions: %s%n", formatPartitions(partitions));
 				for (TopicPartition partition: partitions)
 				{
 					if (!assignedPartitions.containsKey(partition.partition()))
-						assignedPartitions.put(partition.partition(), partition);
-
+					assignedPartitions.put(partition.partition(), partition);
+					
+					
 					if (!lastHeartbeat.containsKey(partition.partition()))
-						lastHeartbeat.put(partition.partition(), new TreeMap<Integer, Instant>());
+					lastHeartbeat.put(partition.partition(), new TreeMap<Integer, Instant>());
 				}
-
 				
+				// reset all known partitions to the beginning (warning: costly)
+				consumer.seekToBeginning(partitions);
 			}
 			});
 
