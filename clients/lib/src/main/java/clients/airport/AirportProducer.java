@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.Random;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
@@ -78,7 +79,11 @@ public class AirportProducer extends AirportSimulator implements AutoCloseable {
 
 		if (producer == null) {
 			Properties props = new Properties();
-			props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
+			props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+
+			// Uncomment to use per-area partitioning (only for the second Kafka lab)
+			//props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, AreaPartitioner.class.getCanonicalName());
+
 			producer = new KafkaProducer<>(props, new IntegerSerializer(), new TerminalInfoSerializer());
 		}
 
