@@ -1,4 +1,4 @@
-package clients.airport.consumers;
+package clients.airport.consumers.status;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -12,6 +12,7 @@ import org.apache.kafka.common.serialization.IntegerDeserializer;
 import clients.airport.AirportProducer;
 import clients.airport.AirportProducer.TerminalInfo;
 import clients.airport.AirportProducer.TerminalInfoDeserializer;
+import clients.airport.consumers.AbstractInteractiveShutdownConsumer;
 import clients.messages.MessageProducer;
 
 /**
