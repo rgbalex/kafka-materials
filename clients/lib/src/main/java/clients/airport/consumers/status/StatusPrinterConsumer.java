@@ -33,7 +33,7 @@ public class StatusPrinterConsumer extends AbstractInteractiveShutdownConsumer {
 			while (!done) {
 				ConsumerRecords<Integer, TerminalInfo> records = consumer.poll(Duration.ofSeconds(1));
 				for (ConsumerRecord<Integer, TerminalInfo> record : records) {
-					System.out.printf("Status event from %s at %s%n", record.key(), record.value());
+					System.out.printf("Status event from %s at %d%n", record.key(), record.value().paperLeft);
 				}
 			}
 		}

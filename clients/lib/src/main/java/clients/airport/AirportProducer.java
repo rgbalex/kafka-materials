@@ -67,7 +67,51 @@ public class AirportProducer extends AirportSimulator implements AutoCloseable {
 		}
 	}
 
+	// **********************
+	// MODIFICATIONS GO HERE
+	// **********************
+	
+	// public static class CheckinInfo {
+	// 	public int started;
+	// 	public int completed;
+	// 	public int cancelled;
+	// }
+
+	// public static class CheckinInfoSerializer implements Serializer<CheckinInfo> {
+	// 	@Override
+	// 	public byte[] serialize(String topic, CheckinInfo data) {
+	// 		ByteBuffer buf = ByteBuffer.allocate(4 + 4 + 4);
+	// 		buf.putInt(data.started);
+	// 		buf.putInt(data.completed);
+	// 		buf.putInt(data.cancelled);
+	// 		return buf.array();
+	// 	}
+	// }
+
+	// public static class CheckinInfoDeserializer implements Deserializer<CheckinInfo> {
+	// 	@Override
+	// 	public CheckinInfo deserialize(String topic, byte[] data) {
+	// 		ByteBuffer buf = ByteBuffer.wrap(data);
+	// 		CheckinInfo info = new CheckinInfo();
+	// 		info.started = buf.getInt();
+	// 		info.completed = buf.getInt();
+	// 		info.cancelled = buf.getInt();
+	// 		return info;
+	// 	}
+	// }
+
+	// public static class CheckinInfoSerde extends WrapperSerde<CheckinInfo> {
+	// 	public CheckinInfoSerde() {
+	// 		super(new CheckinInfoSerializer(), new CheckinInfoDeserializer());
+	// 	}
+	// }
+
+	// **********************
+	// MODIFICATIONS END HERE
+	// **********************
+
 	private KafkaProducer<Integer, TerminalInfo> producer;
+	// private KafkaProducer<Integer, CheckinInfo> cProducer;
 
 	public AirportProducer(int nTerminals, Random rnd) {
 		super(nTerminals, rnd);
@@ -86,7 +130,7 @@ public class AirportProducer extends AirportSimulator implements AutoCloseable {
 
 			producer = new KafkaProducer<>(props, new IntegerSerializer(), new TerminalInfoSerializer());
 		}
-
+		
 		String topicName = EVENT_TYPE_TO_TOPIC.get(type);
 		if (topicName != null) {
 			TerminalInfo tInfo = new TerminalInfo();
@@ -95,6 +139,26 @@ public class AirportProducer extends AirportSimulator implements AutoCloseable {
 			
 			producer.send(new ProducerRecord<>(topicName, t.getId(), tInfo));
 		}
+		
+		// if (cProducer == null) {
+		// 	Properties props = new Properties();
+		// 	props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+
+		// 	// Uncomment to use per-area partitioning (only for the second Kafka lab)
+		// 	//props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, AreaPartitioner.class.getCanonicalName());
+
+		// 	cProducer = new KafkaProducer<>(props, new IntegerSerializer(), new CheckinInfoSerializer());
+		// }
+
+		// String ctopicName = EVENT_TYPE_TO_TOPIC.get(type);
+		// if (ctopicName != null) {
+		// 	CheckinInfo cInfo = new CheckinInfo();
+		// 	cInfo.started = (t.isDuringCheckin()? 1:0);
+		// 	cInfo.completed = 69;
+		// 	cInfo.cancelled = 21;
+			
+		// 	cProducer.send(new ProducerRecord<>(ctopicName, t.getId(), cInfo));
+		// }
 	}
 
 	@Override
@@ -111,7 +175,7 @@ public class AirportProducer extends AirportSimulator implements AutoCloseable {
 			producer.setSpeedupFactor(10);
 
 			// Simulate 2 minutes's worth of events
-			producer.runFor(Duration.ofMinutes(2));
+			producer.runFor(Duration.ofMinutes(1));
 
 			// Report how many actually broken-down machines we have, as a reference value
 			final long crashedCount = producer.getTerminals().stream().filter(e -> e.isCrashed()).count();
