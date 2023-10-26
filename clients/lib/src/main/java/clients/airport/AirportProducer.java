@@ -12,6 +12,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.IntegerSerializer;
+import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes.WrapperSerde;
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -175,12 +176,11 @@ public class AirportProducer extends AirportSimulator implements AutoCloseable {
 			producer.setSpeedupFactor(10);
 
 			// Simulate 2 minutes's worth of events
-			producer.runFor(Duration.ofMinutes(1));
+			producer.runFor(Duration.ofMinutes(2));
 
 			// Report how many actually broken-down machines we have, as a reference value
 			final long crashedCount = producer.getTerminals().stream().filter(e -> e.isCrashed()).count();
 			System.out.printf("%d terminals crashed during this simulation%n", crashedCount);
 		}
 	}
-
 }
